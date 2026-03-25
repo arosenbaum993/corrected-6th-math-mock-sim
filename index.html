@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Grade 6 Georgia Milestones Mock Assessment Simulation</title>
+<style>
+  :root{
+    --ga-blue:#1f5f9c;
+    --ga-blue-2:#2f79bd;
+    --ga-light:#eef5fb;
+    --ga-border:#c7d6e5;
+    --ok:#1f7a4d;
+    --warn:#b36b00;
+    --bad:#a12222;
+    --text:#1d2935;
+    --muted:#5a6b7c;
+    --bg:#f4f7fb;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    color:var(--text);
+    background:#dde7f1;
+  }
+  .hidden{display:none!important}
+  .app{max-width:1280px;margin:0 auto;padding:12px}
+  .banner{
+    background:linear-gradient(180deg,#ffffff 0%,#f5f9fd 100%);
+    border:1px solid #b7cbe0;
+    padding:22px 24px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(18,45,82,.08);
+  }
+  .banner h1{
+    margin:0;
+    text-align:center;
+    font-size:44px;
+    color:#1f3f78;
+    line-height:1.05;
+  }
+  .banner h2{
+    margin:10px 0 0;
+    text-align:center;
+    color:var(--ga-blue-2);
+    font-size:26px;
+  }
+  .banner p{
+    margin:8px 0 0;
+    text-align:center;
+    color:#394d61;
+    font-size:18px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid #bccfe0;
+    border-radius:8px;
+    box-shadow:0 2px 8px rgba(18,45,82,.08);
+  }
+  .start-grid{
+    display:grid;
+    grid-template-columns:1.2fr .8fr;
+    gap:16px;
+    margin-top:16px;
+  }
+  .pad{padding:18px}
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-bottom:12px;
+  }
+  .field label{font-weight:700}
+  input[type="text"], input[type="password"], textarea, select{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid #b8c9d8;
+    border-radius:10px;
+    font-size:16px;
+    background:#fff;
+  }
+  textarea{min-height:88px;resize:vertical}
+  .btn{
+    border:none;
+    background:var(--ga-blue);
+    color:white;
+    padding:11px 16px;
+    border-radius:10px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .btn.secondary{background:#eaf1f8;color:#1d3557;border:1px solid #bfd0e0}
+  .btn.warn{background:#8c5a00}
+  .btn.bad{background:#8d1f1f}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .note{
+    background:#eef7ff;
+    border:1px solid #c9dff4;
+    border-radius:12px;
+    padding:14px;
+    color:#24496d;
+  }
+  .layout{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    gap:16px;
+    margin-top:16px;
+  }
+  .sidebar{
+    position:sticky;
+    top:12px;
+    align-self:start;
+  }
+  .timer{
+    font-size:34px;
+    font-weight:800;
+    color:#193a71;
+  }
+  .small{font-size:13px;color:var(--muted)}
+  .progress-shell{
+    background:#dfeaf4;
+    height:12px;
+    border-radius:999px;
+    overflow:hidden;
+  }
+  .progress-bar{
+    height:100%;
+    width:0;
+    background:linear-gradient(90deg,var(--ga-blue),#4b96db);
+  }
+  .nav-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
+    margin-top:10px;
+  }
+  .nav-btn{
+    border:1px solid #c2d2e1;
+    background:#fff;
+    min-height:42px;
+    border-radius:10px;
+    font-weight:700;
+    cursor:pointer;
+    position:relative;
+  }
+  .nav-btn.answered{background:#e7f5ec;border-color:#9ed0b0}
+  .nav-btn.flagged{outline:2px solid #d08a00}
+  .nav-btn.current{background:#1f5f9c;color:#fff;border-color:#1f5f9c}
+  .nav-btn .dot{
+    position:absolute;right:6px;top:4px;font-size:14px;line-height:1;color:#d08a00
+  }
+  .q-header{
+    background:linear-gradient(180deg,#2a6eaa 0%,#1f5f9c 100%);
+    color:#fff;
+    border-radius:8px 8px 0 0;
+    padding:12px 16px;
+  }
+  .q-header h3{margin:0;font-size:18px}
+  .meta{
+    display:flex;flex-wrap:wrap;gap:8px;
+    margin-top:10px;
+  }
+  .pill{
+    background:#e9f2fb;color:#224c76;
+    border:1px solid #c4d8ea;
+    padding:7px 10px;border-radius:999px;
+    font-size:13px;font-weight:700;
+  }
+  .question-body{padding:20px 22px;background:#fff}
+  .stem{
+    font-size:22px;
+    line-height:1.45;
+    margin-bottom:16px;
+  }
+  .choice{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    border:1px solid #c8d7e6;
+    border-radius:8px;
+    padding:12px 14px;
+    margin:10px 0;
+    background:#fff;
+    cursor:pointer;
+    user-select:none;
+  }
+  .choice:hover{background:#f4f8fc;border-color:#9cbadb}
+  .choice:focus-within{outline:2px solid #7aa7d6;outline-offset:1px}
+  .choice.selected{background:#eef5fc;border-color:#7da7d0}
+  .choice label{display:block;cursor:pointer;width:100%;font-size:18px;line-height:1.4}
+  .choice input{margin-top:4px;transform:scale(1.2);cursor:pointer;flex:0 0 auto}
+  .subtle{color:var(--muted);font-style:italic}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .row > *{flex:1}
+  .te-box{
+    background:#edf7f7;border:1px solid #b7d7d5;border-radius:12px;
+    color:#19605f;padding:12px;margin-bottom:14px;font-weight:700
+  }
+  .math-table{
+    width:100%;border-collapse:collapse;margin:12px 0
+  }
+  .math-table th,.math-table td{
+    border:1px solid #b8c9d8;padding:10px;text-align:center;background:#fff;font-size:16px
+  }
+  .math-table th{background:#f0f5fa}
+  .numline, .coordplane{
+    background:#fff;border:1px solid #cad7e5;border-radius:12px;padding:12px;margin:10px 0
+  }
+  .review-list{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px
+  }
+  .review-item{
+    border:1px solid #c8d5e3;border-radius:12px;padding:10px;background:#fff
+  }
+  .stats{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px
+  }
+  .stat{
+    padding:14px;border-radius:12px;border:1px solid #c7d6e5;background:#fff
+  }
+  .stat .value{font-size:30px;font-weight:800;color:#1f3f78}
+  .table-wrap{overflow:auto}
+  table.report{
+    width:100%;border-collapse:collapse;margin-top:10px;background:#fff
+  }
+  table.report th, table.report td{
+    border:1px solid #c8d5e3;padding:10px;text-align:left;font-size:14px
+  }
+  table.report th{background:#eef5fb}
+  .answer-key{
+    background:#fff;border:1px solid #c8d5e3;border-radius:12px;padding:12px;margin-top:14px
+  }
+  .section-tag{
+    display:inline-block;background:#2f79bd;color:#fff;padding:5px 8px;border-radius:999px;font-size:12px;font-weight:700;margin-right:8px
+  }
+  .right{text-align:right}
+  .center{text-align:center}
+  .footer-actions{display:flex;justify-content:space-between;gap:12px;margin-top:18px;flex-wrap:wrap}
+  .inline-input{max-width:220px}
+  .badge{
+    display:inline-block;padding:4px 8px;border-radius:999px;background:#eef5fb;border:1px solid #cad7e5;font-size:12px;font-weight:700
+  }
+  .teacher-row{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-top:12px}
+  .tiny{font-size:12px;color:var(--muted)}
+  .summary-line{margin-top:8px}
+  @media (max-width:900px){
+    .layout,.start-grid{grid-template-columns:1fr}
+    .sidebar{position:static}
+    .banner h1{font-size:34px}
+    .stem{font-size:24px}
+  }
+
+@media print{
+  body{background:#fff}
+  .banner,.topbar,.sidebar,.navgrid,.question-actions,.footer-actions,#testScreen,#reviewScreen,#startScreen,.teacher-row,#answerKeyWrap{display:none!important}
+  #resultsScreen{display:block!important}
+  .app{max-width:none;padding:0}
+  .card{border:none;box-shadow:none}
+  table.report{font-size:12px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <section id="startScreen">
+    <div class="banner">
+      <h1>Grade 6 Mathematics</h1>
+      <h2>Georgia Milestones Mock Assessment</h2>
+      <p>50 Items • 58 Points • 60 Minutes</p>
+      <p>Sections: NR.1 • NR.2 • NR.3 • NR.4 • GSR.5 • PAR.6 • PAR.7 • PAR.8</p>
+    </div>
+
+    <div class="start-grid">
+      <div class="card pad">
+        <div class="field">
+          <label for="studentName">Student Name</label>
+          <input id="studentName" type="text" placeholder="Enter student name" />
+        </div>
+        <div class="field">
+          <label for="studentId">Student ID / Class</label>
+          <input id="studentId" type="text" placeholder="Optional" />
+        </div>
+        <div class="field">
+          <label for="teacherName">Teacher</label>
+          <input id="teacherName" type="text" placeholder="Optional" />
+        </div>
+        <button class="btn" id="beginBtn">Begin Assessment</button>
+        <div id="startStatus" class="tiny" style="margin-top:10px"></div>
+      </div>
+
+      <div class="card pad">
+        <div class="note">
+          <strong>Simulation features</strong>
+          <div class="summary-line">Standalone HTML</div>
+          <div class="summary-line">Georgia Milestones-style interface</div>
+          <div class="summary-line">Timer, progress bar, flag for review, review page, score report</div>
+          <div class="summary-line">Teacher-view answer key</div>
+          <div class="summary-line">Can send results to Google Sheets after you add your Apps Script web app URL</div>
+        </div>
+        <div style="margin-top:12px" class="tiny">
+          Constructed response items are partly auto-scored where numeric checks are possible. Written explanations still need teacher review.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="testScreen" class="hidden">
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="card pad">
+          <div class="small">Time Remaining</div>
+          <div class="timer" id="timerDisplay">60:00</div>
+          <div class="small" id="studentLabel"></div>
+          <div style="margin-top:14px" class="small">Progress</div>
+          <div class="progress-shell"><div class="progress-bar" id="progressBar"></div></div>
+          <div class="small" id="progressText" style="margin-top:6px"></div>
+          <div style="margin-top:14px" class="stats">
+            <div class="stat">
+              <div class="small">Answered</div>
+              <div class="value" id="answeredCount">0</div>
+            </div>
+            <div class="stat">
+              <div class="small">Flagged</div>
+              <div class="value" id="flaggedCount">0</div>
+            </div>
+          </div>
+          <div style="margin-top:14px" class="small">Question Navigator</div>
+          <div class="nav-grid" id="navGrid"></div>
+          <div class="footer-actions">
+            <button class="btn secondary" id="reviewBtn">Review</button>
+            <button class="btn warn" id="submitBtn">Submit Test</button>
+          </div>
+        </div>
+      </aside>
+
+      <main>
+        <div class="note" style="margin-bottom:10px;background:#f8fbff">Student Test Simulation • Use <strong>Next</strong>, <strong>Previous</strong>, and <strong>Flag for Review</strong> just like a secure test platform.</div>
+        <div class="card" id="questionCard"></div>
+        <div class="footer-actions">
+          <button class="btn secondary" id="prevBtn">Previous</button>
+          <button class="btn secondary" id="flagBtn">Flag for Review</button>
+          <button class="btn" id="nextBtn">Next</button>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <section id="reviewScreen" class="hidden">
+    <div class="card pad">
+      <h2 style="margin-top:0;color:#1f3f78">Review Before Submit</h2>
+      <div class="stats">
+        <div class="stat"><div class="small">Answered</div><div class="value" id="reviewAnswered">0</div></div>
+        <div class="stat"><div class="small">Unanswered</div><div class="value" id="reviewUnanswered">0</div></div>
+        <div class="stat"><div class="small">Flagged</div><div class="value" id="reviewFlagged">0</div></div>
+      </div>
+      <div class="review-list" id="reviewList" style="margin-top:16px"></div>
+      <div class="footer-actions">
+        <button class="btn secondary" id="backToTestBtn">Back to Test</button>
+        <button class="btn warn" id="finalSubmitBtn">Submit Assessment</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="resultsScreen" class="hidden">
+    <div class="card pad">
+      <h2 style="margin-top:0;color:#1f3f78">Assessment Results</h2>
+      <div class="stats">
+        <div class="stat"><div class="small">Auto-Scored Points</div><div class="value" id="autoScoreValue">0</div></div>
+        <div class="stat"><div class="small">Possible Auto-Scored Points</div><div class="value" id="autoPossibleValue">0</div></div>
+        <div class="stat"><div class="small">Manual Review Remaining</div><div class="value" id="manualPendingValue">0</div></div>
+        <div class="stat"><div class="small">Completion</div><div class="value" id="completionValue">0%</div></div>
+      </div>
+
+      <div class="note" style="margin-top:14px">
+        This report includes exact item responses, section performance, and standard performance. Constructed-response explanations should still be reviewed by a teacher.
+      </div>
+
+      <div class="table-wrap">
+        <h3>Section Performance</h3>
+        <table class="report" id="sectionTable"></table>
+      </div>
+
+      <div class="table-wrap">
+        <h3>Standard Performance</h3>
+        <table class="report" id="standardTable"></table>
+      </div>
+
+      <div class="table-wrap">
+        <h3>Item Report</h3>
+        <table class="report" id="itemTable"></table>
+      </div>
+
+      <div class="teacher-row">
+        <div class="field inline-input">
+          <label for="teacherPassword">Teacher Answer Key Password</label>
+          <input type="password" id="teacherPassword" placeholder="Enter password" />
+        </div>
+        <button class="btn secondary" id="showKeyBtn">Show Answer Key</button>
+        <button class="btn secondary" id="sendToSheetBtn">Send Results to Google Sheet</button>
+        <button class="btn secondary" id="printReportBtn">Print Student Report</button>
+        <button class="btn secondary" id="openDashboardBtn">Open Teacher Dashboard</button>
+        <button class="btn secondary" id="downloadJsonBtn">Download JSON</button>
+      </div>
+      <div class="tiny" style="margin-top:8px">
+        Default password is <strong>teacher123</strong>. Change it in the HTML before using with students.
+      </div>
+
+      <div id="sheetStatus" class="tiny" style="margin-top:10px"></div>
+      <div id="answerKeyWrap" class="hidden"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQ0llAE2QU3BWMTINKxI_QqYu5lsM4tijaD5JghWsKNzWKdxs1rHQKnZY_MOWXInH-/exec";
+const TEACHER_PASSWORD = "teacher123";
+const TEST_MINUTES = 60;
+const TEST_KEY = "grade6_math_mock_v3";
+const DASHBOARD_FILE = "grade6_teacher_dashboard.html";
+const LOCAL_LOCK_PREFIX = "ga_grade6_math_mock_locked_";
+
+const sections = {
+  "6.NR.1":"Section 1: Numerical Reasoning — Fractions & Decimals",
+  "6.NR.2":"Section 2: Numerical Reasoning — Data & Statistics",
+  "6.NR.3":"Section 3: Numerical Reasoning — Integers & Rational Numbers",
+  "6.NR.4":"Section 4: Numerical Reasoning — Ratios, Rates & Proportions",
+  "6.GSR.5":"Section 5: Geometric & Spatial Reasoning — Area, Surface Area & Volume",
+  "6.PAR.6":"Section 6: Patterning & Algebraic Reasoning — Expressions",
+  "6.PAR.7":"Section 7: Patterning & Algebraic Reasoning — Equations & Inequalities",
+  "6.PAR.8":"Section 8: Patterning & Algebraic Reasoning — Coordinate Plane"
+};
+
+const questions = [
+  {id:1, section:"6.NR.1", standard:["6.NR.1.2"], dok:"1", level:"Developing", points:1, type:"sr",
+   stem:"What is the product of ¾ × ⅔ ?",
+   options:{A:"1/2", B:"1/2 (simplified from 6/12)", C:"5/12", D:"1/6"},
+   correct:["A","B"], explanation:"¾ × ⅔ = 6/12 = 1/2."},
+
+  {id:2, section:"6.NR.1", standard:["6.NR.1.2"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"A baker has ⅞ of a cup of sugar. Each batch of cookies requires ¼ of a cup. How many complete batches can the baker make?",
+   options:{A:"2", B:"3", C:"3½", D:"7"},
+   correct:["B"], explanation:"⅞ ÷ ¼ = 3.5, so the baker can make 3 complete batches."},
+
+  {id:3, section:"6.NR.1", standard:["6.NR.1.1"], dok:"2", level:"Developing", points:1, type:"sr",
+   stem:"Marcus walked 2⅓ miles on Saturday and 1¾ miles on Sunday. How many miles did he walk in all?",
+   options:{A:"3 1/24", B:"4¼", C:"4 1/12", D:"4⅔"},
+   correct:["C"], explanation:"2⅓ + 1¾ = 7/3 + 7/4 = 49/12 = 4 1/12."},
+
+  {id:4, section:"6.NR.1", standard:["6.NR.1.3"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"A store charges $4.75 per pound of trail mix. Keisha buys 3.2 pounds. What is the total cost?",
+   options:{A:"$14.20", B:"$15.00", C:"$15.20", D:"$16.24"},
+   correct:["C"], explanation:"4.75 × 3.2 = 15.20."},
+
+  {id:5, section:"6.NR.1", standard:["6.NR.1.2"], dok:"3", level:"Proficient", points:2, type:"cr5",
+   te:"Technology-Enhanced Item: Constructed Response — Show all work. Full credit requires both a correct answer and a complete explanation.",
+   stem:"A recipe calls for ⅜ of a cup of butter. Jalen wants to make 1½ times the recipe for a party.",
+   parts:[
+     {key:"partA", label:"Part A: How much butter does Jalen need? Show your work."},
+     {key:"partB", label:"Part B: Jalen only has 1¼ cups of butter at home. Does he have enough? Explain how you know using a comparison statement."}
+   ],
+   explanation:"Jalen needs ⅜ × 1½ = 9/16 cup. Since 1¼ = 5/4 and 5/4 > 9/16, he has enough."
+  },
+
+  {id:6, section:"6.NR.2", standard:["6.NR.2.2"], dok:"1", level:"Developing", points:1, type:"sr",
+   stem:"A teacher recorded the number of books each student read last month: 2, 5, 3, 4, 5, 6, 3, 5, 4, 2. Which type of display would BEST show the frequency of each value?",
+   options:{A:"Bar graph", B:"Box plot", C:"Dot plot", D:"Histogram"},
+   correct:["C"], explanation:"A dot plot is best for displaying frequency of a small discrete data set."},
+
+  {id:7, section:"6.NR.2", standard:["6.NR.2.3"], dok:"2", level:"Developing", points:1, type:"sr",
+   stem:"The ages of seven cousins are: 8, 11, 9, 14, 11, 10, 9. What is the median age?",
+   options:{A:"9", B:"10", C:"10.29", D:"11"},
+   correct:["B"], explanation:"Ordered data: 8, 9, 9, 10, 11, 11, 14. The median is 10."},
+
+  {id:8, section:"6.NR.2", standard:["6.NR.2.3"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:'A box plot for a set of test scores has the following five-number summary:<br><table class="math-table"><tr><th>Minimum</th><th>Q1</th><th>Median</th><th>Q3</th><th>Maximum</th></tr><tr><td>54</td><td>68</td><td>75</td><td>84</td><td>96</td></tr></table>What is the Interquartile Range (IQR) of the test scores?',
+   options:{A:"16", B:"21", C:"22", D:"42"},
+   correct:["A"], explanation:"IQR = Q3 - Q1 = 84 - 68 = 16."},
+
+  {id:9, section:"6.NR.2", standard:["6.NR.2.3"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"A dot plot shows the number of push-ups done by students in a gym class. The data clusters between 15 and 25, with one value at 45. Which statement BEST describes the effect of the value 45 on the data set?",
+   options:{A:"It will make the mean greater than the median.", B:"It will make the mean less than the median.", C:"It will not affect the mean or median.", D:"It will make the mean and median equal."},
+   correct:["A"], explanation:"The outlier 45 pulls the mean upward more than the median."},
+
+  {id:10, section:"6.NR.2", standard:["6.NR.2.6"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"The daily high temperatures (°F) for one week were: 72, 75, 71, 73, 74, 76, 72. The mean is 73.3°F and the median is 73°F. A new day with a high of 73°F is added to the data set. Which statement describes the impact?",
+   options:{A:"Both the mean and the median will increase.", B:"The mean will decrease; the median will stay the same.", C:"The mean will decrease slightly; the median will remain 73°F.", D:"The median will increase; the mean will remain unchanged."},
+   correct:["C"], explanation:"The mean decreases slightly to 73.25 and the median remains 73."},
+
+  {id:11, section:"6.NR.2", standard:["6.NR.2.3"], dok:"2", level:"Proficient", points:1, type:"ms",
+   te:"Technology-Enhanced Item: Select ALL answers that apply. There may be more than one correct answer.",
+   stem:"The quiz scores for a class of 6 students are: 65, 70, 70, 85, 90, 100. Which of the following statements are TRUE? Select all that apply.",
+   options:{A:"The mean is 80.", B:"The median is 77.5.", C:"The range is 35.", D:"The IQR is 25.", E:"The mean and median are not equal."},
+   correct:["A","B","C","E"], explanation:"Mean = 80, median = 77.5, range = 35, IQR = 20."},
+
+  {id:12, section:"6.NR.2", standard:["6.NR.2.4"], dok:"3", level:"Proficient / Distinguished", points:2, type:"cr12",
+   te:"Technology-Enhanced Item: Constructed Response — Show all work. Full credit requires a correct answer and a complete written explanation.",
+   stem:'Two basketball players scored the following points in 6 games:<table class="math-table"><tr><th>Game</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr><tr><th>Player A</th><td>12</td><td>14</td><td>11</td><td>13</td><td>12</td><td>14</td></tr><tr><th>Player B</th><td>6</td><td>22</td><td>4</td><td>18</td><td>10</td><td>16</td></tr></table>',
+   explanation:"Player A mean = 12⅔, median = 12.5. Player B mean = 12⅔, median = 13. Player A is more consistent because the scores have much less variability."
+  },
+
+  {id:13, section:"6.NR.3", standard:["6.NR.3.1"], dok:"1", level:"Developing", points:1, type:"sr",
+   stem:"The temperature in Atlanta was −18°F. The temperature in Miami was −3°F. Which inequality correctly compares these temperatures?",
+   options:{A:"−18 > −3", B:"−18 = −3", C:"−18 < −3", D:"−3 < −18"},
+   correct:["C"], explanation:"On a number line, −18 is less than −3."},
+
+  {id:14, section:"6.NR.3", standard:["6.NR.3.2"], dok:"1", level:"Developing", points:1, type:"sr",
+   stem:"Point P is located at −7 on a number line. What is the location of the opposite of Point P?",
+   options:{A:"−14", B:"0", C:"7", D:"17"},
+   correct:["C"], explanation:"The opposite of −7 is 7."},
+
+  {id:15, section:"6.NR.3", standard:["6.NR.3.5"], dok:"2", level:"Developing", points:1, type:"sr",
+   stem:"A submarine is at an elevation of −340 meters. A scuba diver is at an elevation of −85 meters. What is the absolute value of the submarine's elevation?",
+   options:{A:"−340", B:"−85", C:"85", D:"340"},
+   correct:["D"], explanation:"|−340| = 340."},
+
+  {id:16, section:"6.NR.3", standard:["6.NR.3.4"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"Which list shows the rational numbers ordered from least to greatest?",
+   options:{A:"−2.5, −13/4, 0, 3/2, 1.75", B:"−13/4, −2.5, 0, 3/2, 1.75", C:"−2.5, −13/4, 0, 1.75, 3/2", D:"1.75, 3/2, 0, −13/4, −2.5"},
+   correct:["B"], explanation:"−13/4 = −3.25, so the ascending order is −3.25, −2.5, 0, 1.5, 1.75."},
+
+  {id:17, section:"6.NR.3", standard:["6.NR.3.5"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"A checking account balance is −$47.50. A savings account balance is −$12.00. Which statement correctly compares the account balances using absolute value?",
+   options:{A:"|−47.50| < |−12.00|, so the checking account has less debt.", B:"|−47.50| > |−12.00|, so the checking account has more debt.", C:"−47.50 > −12.00, so the checking account balance is greater.", D:"|−47.50| = |−12.00|, so the accounts have equal debt."},
+   correct:["B"], explanation:"47.50 > 12.00, so the checking account has more debt."},
+
+  {id:18, section:"6.NR.3", standard:["6.NR.3.3","6.NR.3.5"], dok:"3", level:"Proficient", points:2, type:"cr18",
+   te:"Technology-Enhanced Item: Constructed Response — Show all work and reasoning for full credit.",
+   stem:'Use the number line to answer both parts.<div class="numline"><svg viewBox="0 0 600 100" width="100%" height="80" aria-label="number line"><line x1="40" y1="45" x2="560" y2="45" stroke="#294d73" stroke-width="3"/><polygon points="147,20 157,35 137,35" fill="#2f79bd"/><polygon points="443,20 453,35 433,35" fill="#2f79bd"/>' +
+      Array.from({length:11},(_,i)=>`<g><line x1="${40+i*52}" y1="35" x2="${40+i*52}" y2="55" stroke="#294d73" stroke-width="2"/><text x="${40+i*52}" y="78" text-anchor="middle" font-size="16" fill="#294d73">${i-5}</text></g>`).join('') +
+      '</svg><div class="small center">Point A is at −3 and Point B is at 3.</div></div>',
+   explanation:"The points are opposites because they are the same distance from 0 on opposite sides. |−3| = 3."
+  },
+
+  {id:19, section:"6.NR.4", standard:["6.NR.4.1"], dok:"1", level:"Developing", points:1, type:"sr",
+   stem:"In a bag of marbles, there are 8 red marbles and 5 blue marbles. Which ratio represents the number of blue marbles to the TOTAL number of marbles?",
+   options:{A:"5 : 8", B:"8 : 5", C:"5 : 13", D:"8 : 13"},
+   correct:["C"], explanation:"There are 13 marbles total, so blue : total = 5 : 13."},
+
+  {id:20, section:"6.NR.4", standard:["6.NR.4.4"], dok:"2", level:"Developing", points:1, type:"sr",
+   stem:"A car travels 270 miles in 4.5 hours at a constant speed. What is the unit rate in miles per hour?",
+   options:{A:"50 mph", B:"55 mph", C:"60 mph", D:"65 mph"},
+   correct:["C"], explanation:"270 ÷ 4.5 = 60."},
+
+  {id:21, section:"6.NR.4", standard:["6.NR.4.6"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"A school survey found that 156 out of 240 students prefer lunch in the cafeteria. What percent of students prefer the cafeteria?",
+   options:{A:"55%", B:"60%", C:"65%", D:"75%"},
+   correct:["C"], explanation:"156 ÷ 240 = 0.65 = 65%."},
+
+  {id:22, section:"6.NR.4", standard:["6.NR.4.2"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:'The table shows an equivalent ratio relationship between cups of flour and cups of sugar in a recipe.<table class="math-table"><tr><th>Cups of Flour</th><th>Cups of Sugar</th></tr><tr><td>3</td><td>2</td></tr><tr><td>6</td><td>4</td></tr><tr><td>9</td><td>?</td></tr><tr><td>15</td><td>10</td></tr></table>What is the missing value in the table?',
+   options:{A:"5", B:"6", C:"7", D:"8"},
+   correct:["B"], explanation:"The ratio is 3 : 2, so 9 cups of flour match 6 cups of sugar."},
+
+  {id:23, section:"6.NR.4", standard:["6.NR.4.3"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"A map uses a scale of 1.5 inches = 30 miles. Two cities are 5 inches apart on the map. What is the actual distance between the cities?",
+   options:{A:"75 miles", B:"90 miles", C:"100 miles", D:"150 miles"},
+   correct:["C"], explanation:"30 ÷ 1.5 = 20 miles per inch; 20 × 5 = 100 miles."},
+
+  {id:24, section:"6.NR.4", standard:["6.NR.4.5"], dok:"2", level:"Proficient", points:1, type:"dropdown24",
+   te:"Technology-Enhanced Item: Drop-Down Item — Choose the best word or value from each drop-down menu to complete the statement.",
+   stem:'Maria earns $11.25 for every 1.5 hours of babysitting.<div style="margin-top:10px">Maria\'s unit rate is <span id="dd24_1_wrap"></span> per hour. At this rate, she will earn <span id="dd24_2_wrap"></span> for 7 hours of work.</div>',
+   explanation:"11.25 ÷ 1.5 = 7.50 per hour. 7 × 7.50 = 52.50."
+  },
+
+  {id:25, section:"6.NR.4", standard:["6.NR.4.2","6.NR.4.4"], dok:"3", level:"Proficient / Distinguished", points:2, type:"cr25",
+   te:"Technology-Enhanced Item: Constructed Response — Full credit requires a completed table, correct equation, and labeled explanation.",
+   stem:'A faucet leaks at a constant rate of 3 gallons every 2 hours.<table class="math-table"><tr><th>Time (hours)</th><th>2</th><th>4</th><th>6</th><th>8</th><th>10</th></tr><tr><th>Gallons Leaked</th><td>3</td><td>?</td><td>?</td><td>12</td><td>?</td></tr></table>'
+  },
+
+  {id:26, section:"6.GSR.5", standard:["6.GSR.5.1"], dok:"1", level:"Developing", points:1, type:"sr",
+   stem:"A triangle has a base of 14 cm and a height of 9 cm. What is the area of the triangle?",
+   options:{A:"23 cm²", B:"46 cm²", C:"63 cm²", D:"126 cm²"},
+   correct:["C"], explanation:"Area = 1/2 × 14 × 9 = 63 cm²."},
+
+  {id:27, section:"6.GSR.5", standard:["6.GSR.5.1"], dok:"2", level:"Developing", points:1, type:"sr",
+   stem:"An L-shaped figure is formed by combining a rectangle that is 10 m × 6 m with a smaller rectangle that is 4 m × 3 m attached to the upper-right corner. What is the total area of the L-shaped figure?",
+   options:{A:"48 m²", B:"60 m²", C:"72 m²", D:"80 m²"},
+   correct:["C"], explanation:"60 + 12 = 72 m²."},
+
+  {id:28, section:"6.GSR.5", standard:["6.GSR.5.2"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"The net of a rectangular prism has two faces that are 8 in × 5 in, two faces that are 8 in × 3 in, and two faces that are 5 in × 3 in. What is the total surface area of the prism?",
+   options:{A:"79 in²", B:"120 in²", C:"158 in²", D:"240 in²"},
+   correct:["C"], explanation:"2(40 + 24 + 15) = 158 in²."},
+
+  {id:29, section:"6.GSR.5", standard:["6.GSR.5.3"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"A rectangular storage box has a length of 2½ feet, a width of 1⅓ feet, and a height of ¾ feet. What is the volume of the box?",
+   options:{A:"2½ ft³", B:"3 1/100 ft³", C:"2½ ft³", D:"3 13/48 ft³"},
+   correct:["A","C"], explanation:"(5/2)(4/3)(3/4) = 5/2 = 2½ ft³."},
+
+  {id:30, section:"6.GSR.5", standard:["6.GSR.5.1"], dok:"2", level:"Proficient", points:1, type:"ms",
+   te:"Technology-Enhanced Item: Select ALL answers that apply. There may be more than one correct answer.",
+   stem:"A polygon can be decomposed into the shapes below to find its area. Which combinations of shapes could be used to find the area of a trapezoid? Select all that apply.",
+   options:{A:"Two triangles", B:"One rectangle and two triangles", C:"One rectangle and one triangle", D:"Three rectangles", E:"A parallelogram and a triangle"},
+   correct:["A","B","C","E"], explanation:"Several valid decompositions can produce a trapezoid. Three rectangles alone cannot."},
+
+  {id:31, section:"6.GSR.5", standard:["6.GSR.5.1","6.GSR.5.3"], dok:"3", level:"Proficient / Distinguished", points:2, type:"cr31",
+   te:"Technology-Enhanced Item: Constructed Response — Show all work for full credit.",
+   stem:"A garden is shaped like a right triangle with legs of 6 meters and 8 meters.",
+   explanation:"Area = 1/2 × 6 × 8 = 24 m². Volume with depth 1/2 meter = 24 × 1/2 = 12 m³."
+  },
+
+  {id:32, section:"6.PAR.6", standard:["6.PAR.6.3"], dok:"1", level:"Developing", points:1, type:"sr",
+   stem:"In the expression 7x² + 4x − 9, what is the coefficient of the second term?",
+   options:{A:"2", B:"4", C:"7", D:"−9"},
+   correct:["B"], explanation:"The second term is 4x, so its coefficient is 4."},
+
+  {id:33, section:"6.PAR.6", standard:["6.PAR.6.4"], dok:"2", level:"Developing", points:1, type:"sr",
+   stem:"What is the value of the expression 3a² − 5 when a = 4?",
+   options:{A:"7", B:"43", C:"43", D:"139"},
+   correct:["B","C"], explanation:"3(4²) - 5 = 3(16) - 5 = 43."},
+
+  {id:34, section:"6.PAR.6", standard:["6.PAR.6.2"], dok:"2", level:"Developing", points:1, type:"sr",
+   stem:"What is the Greatest Common Factor (GCF) of 48 and 60?",
+   options:{A:"6", B:"8", C:"12", D:"24"},
+   correct:["C"], explanation:"The greatest common factor of 48 and 60 is 12."},
+
+  {id:35, section:"6.PAR.6", standard:["6.PAR.6.3"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"A parking garage charges a flat fee of $3.00 plus $2.50 for every hour parked. Which expression represents the total cost (in dollars) for h hours of parking?",
+   options:{A:"3h + 2.50", B:"2.50 + 3h", C:"2.50h + 3", D:"(2.50 + 3)h"},
+   correct:["C"], explanation:"Total cost = flat fee + hourly fee = 3 + 2.50h."},
+
+  {id:36, section:"6.PAR.6", standard:["6.PAR.6.5"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"Which expression is equivalent to 4(3x + 7) − 2x?",
+   options:{A:"10x + 7", B:"10x + 28", C:"14x + 28", D:"12x + 28 − 2x"},
+   correct:["B","D"], explanation:"4(3x + 7) − 2x = 12x + 28 − 2x = 10x + 28."},
+
+  {id:37, section:"6.PAR.6", standard:["6.PAR.6.3"], dok:"2", level:"Proficient", points:1, type:"match37",
+   te:"Technology-Enhanced Item: Match each written description on the left to the correct algebraic expression on the right. Write the letter of the matching expression on the line provided.",
+   stem:'<table class="math-table"><tr><th>Written Description</th><th>Choose</th></tr>' +
+        '<tr><td>"The product of 6 and a number, decreased by 4"</td><td><span id="match37_1"></span></td></tr>' +
+        '<tr><td>"A number divided by 6, plus 4"</td><td><span id="match37_2"></span></td></tr>' +
+        '<tr><td>"4 more than the quotient of a number and 6"</td><td><span id="match37_3"></span></td></tr>' +
+        '<tr><td>"6 times the difference of a number and 4"</td><td><span id="match37_4"></span></td></tr></table>' +
+        '<div class="note"><strong>Algebraic Expression Choices</strong><br>A. n/6 + 4<br>B. 6n − 4<br>C. 6(n − 4)<br>D. n/6 − 4</div>',
+   explanation:'1 → B, 2 → A, 3 → A, 4 → C.'},
+
+  {id:38, section:"6.PAR.6", standard:["6.PAR.6.3","6.PAR.6.4","6.PAR.6.5"], dok:"3", level:"Proficient / Distinguished", points:2, type:"cr38",
+   te:"Technology-Enhanced Item: Constructed Response — Full credit requires a correct expression, correct evaluation, and written justification.",
+   stem:"A phone plan charges a monthly fee of $25.00 plus $0.10 per text message sent.",
+   explanation:"Expression: C = 25 + 0.10t. For 85 texts, the cost is 25 + 8.50 = 33.50. 0.10(t + 250) = 0.10t + 25, so it is equivalent."
+  },
+
+  {id:39, section:"6.PAR.7", standard:["6.PAR.7.1"], dok:"1", level:"Developing", points:1, type:"sr",
+   stem:"Which value of x makes the equation 4x − 7 = 17 true?",
+   options:{A:"x = 2.5", B:"x = 4", C:"x = 6", D:"x = 10"},
+   correct:["C"], explanation:"4x = 24, so x = 6."},
+
+  {id:40, section:"6.PAR.7", standard:["6.PAR.7.3"], dok:"2", level:"Developing", points:1, type:"sr",
+   stem:"Solve for x: x/8 = 5.5",
+   options:{A:"x = 0.6875", B:"x = 13.5", C:"x = 44", D:"x = 46.5"},
+   correct:["C"], explanation:"Multiply both sides by 8: x = 44."},
+
+  {id:41, section:"6.PAR.7", standard:["6.PAR.7.2"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"There are 35 students in a class. After some students left for a field trip, there were 28 students remaining. Which equation could be used to find the number of students, s, who went on the field trip?",
+   options:{A:"35 + s = 28", B:"28 − s = 35", C:"s − 35 = 28", D:"35 − s = 28"},
+   correct:["D"], explanation:"Starting amount - students who left = remaining students."},
+
+  {id:42, section:"6.PAR.7", standard:["6.PAR.7.4"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:'Which inequality is represented by the graph below?<div class="numline"><svg viewBox="0 0 520 90" width="100%" height="72" aria-label="inequality number line"><line x1="30" y1="40" x2="490" y2="40" stroke="#294d73" stroke-width="3"/>' +
+     Array.from({length:9},(_,i)=>`<g><line x1="${30+i*57.5}" y1="32" x2="${30+i*57.5}" y2="48" stroke="#294d73" stroke-width="2"/><text x="${30+i*57.5}" y="70" text-anchor="middle" font-size="15">${i-4}</text></g>`).join('') +
+     '<circle cx="145" cy="40" r="8" fill="#294d73"/><line x1="145" y1="40" x2="455" y2="40" stroke="#2f79bd" stroke-width="4"/><polygon points="455,40 440,32 440,48" fill="#2f79bd"/></svg></div>',
+   options:{A:"x < −2", B:"x ≤ −2", C:"x > −2", D:"x ≥ −2"},
+   correct:["D"], explanation:"Closed circle at −2 with arrow to the right means x ≥ −2."},
+
+  {id:43, section:"6.PAR.7", standard:["6.PAR.7.4"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"An elevator can hold a maximum of 1,500 pounds. There are already 860 pounds of equipment in the elevator. Which inequality represents the additional weight w (in pounds) that can be added?",
+   options:{A:"w > 640", B:"w ≤ 640", C:"w < 640", D:"w ≥ 640"},
+   correct:["B"], explanation:"Maximum additional weight is 1500 - 860 = 640, so w ≤ 640."},
+
+  {id:44, section:"6.PAR.7", standard:["6.PAR.7.2","6.PAR.7.3","6.PAR.7.4"], dok:"3", level:"Proficient / Distinguished", points:2, type:"cr44",
+   te:"Technology-Enhanced Item: Constructed Response — Full credit requires a correct equation or inequality, solution, and written description.",
+   stem:"A school store sells notebooks for $1.75 each.",
+   explanation:"Part A: 1.75n = 12.25, so n = 7. Part B: 1.75n ≤ 15, so n ≤ 8.571..., meaning DeShawn can buy at most 8 notebooks."
+  },
+
+  {id:45, section:"6.PAR.8", standard:["6.PAR.8.2"], dok:"1", level:"Developing", points:1, type:"sr",
+   stem:"In which quadrant is the point (−4, 7) located?",
+   options:{A:"Quadrant I", B:"Quadrant II", C:"Quadrant III", D:"Quadrant IV"},
+   correct:["B"], explanation:"Negative x and positive y place the point in Quadrant II."},
+
+  {id:46, section:"6.PAR.8", standard:["6.PAR.8.1"], dok:"2", level:"Developing", points:1, type:"sr",
+   stem:"Point M is located at (3, −5) on a coordinate plane. Point N is the reflection of Point M across the x-axis. What are the coordinates of Point N?",
+   options:{A:"(−3, −5)", B:"(−3, 5)", C:"(3, 5)", D:"(5, 3)"},
+   correct:["C"], explanation:"Reflecting across the x-axis keeps x and changes the sign of y."},
+
+  {id:47, section:"6.PAR.8", standard:["6.PAR.8.3"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"Points A(1, 4) and B(1, −3) are plotted on a coordinate plane. What is the distance between Point A and Point B?",
+   options:{A:"1", B:"3", C:"7", D:"8"},
+   correct:["C"], explanation:"The y-values differ by 7."},
+
+  {id:48, section:"6.PAR.8", standard:["6.PAR.8.4"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"A rectangle has vertices at A(−2, 5), B(6, 5), C(6, −1), and D(−2, −1). What is the perimeter of the rectangle?",
+   options:{A:"14 units", B:"28 units", C:"48 units", D:"56 units"},
+   correct:["B"], explanation:"Length = 8, width = 6, perimeter = 2(8 + 6) = 28."},
+
+  {id:49, section:"6.PAR.8", standard:["6.PAR.8.2"], dok:"2", level:"Proficient", points:1, type:"sr",
+   stem:"The point (5, −8) is reflected across the y-axis. Which statement about the reflected point is TRUE?",
+   options:{A:"The reflected point has the same x-coordinate and opposite y-coordinate.", B:"The reflected point has an opposite x-coordinate and the same y-coordinate.", C:"Both coordinates change signs after the reflection.", D:"Neither coordinate changes after the reflection."},
+   correct:["B"], explanation:"Reflecting across the y-axis changes the sign of x only."},
+
+  {id:50, section:"6.PAR.8", standard:["6.PAR.8.3","6.PAR.8.4"], dok:"3", level:"Proficient / Distinguished", points:2, type:"cr50",
+   te:"Technology-Enhanced Item: Constructed Response — Full credit requires correctly labeled coordinates, correct side lengths, and correct perimeter.",
+   stem:'Use the coordinate plane below to answer both parts.<div class="coordplane"><svg viewBox="0 0 360 360" width="100%" height="320" aria-label="coordinate plane">' +
+        '<rect x="20" y="20" width="320" height="320" fill="#fff"/>' +
+        Array.from({length:13},(_,i)=>`<line x1="${20+i*26.666}" y1="20" x2="${20+i*26.666}" y2="340" stroke="${i===6 ? "#294d73":"#d5e1ed"}" stroke-width="${i===6?2:1}"/><line x1="20" y1="${20+i*26.666}" x2="340" y2="${20+i*26.666}" stroke="${i===6 ? "#294d73":"#d5e1ed"}" stroke-width="${i===6?2:1}"/>`).join('') +
+        Array.from({length:13},(_,i)=>`<text x="${20+i*26.666}" y="355" font-size="12" text-anchor="middle">${i-6}</text><text x="6" y="${24+i*26.666}" font-size="12">${6-i}</text>`).join('') +
+        '</svg></div>',
+   explanation:"The polygon is a rectangle. Side lengths: PQ = 5, QR = 7, RS = 5, SP = 7. Perimeter = 24."
+  }
+];
+
+let state = {
+  started:false,
+  currentIndex:0,
+  answers:{},
+  flagged:{},
+  student:{name:"",id:"",teacher:""},
+  endTime:null,
+  finished:false,
+  results:null
+};
+
+function safeId(value){
+  return String(value || "").trim().toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"");
+}
+function submissionIdentity(name, id){
+  return safeId(id || name);
+}
+function localLockKey(name, id){
+  const key = submissionIdentity(name, id);
+  return key ? LOCAL_LOCK_PREFIX + TEST_KEY + "_" + key : "";
+}
+function getLocalLock(name, id){
+  const key = localLockKey(name, id);
+  if(!key) return null;
+  try{ return JSON.parse(localStorage.getItem(key) || "null"); }catch(e){ return null; }
+}
+function setLocalLock(results){
+  const key = localLockKey(results.meta.studentName, results.meta.studentId);
+  if(!key) return;
+  localStorage.setItem(key, JSON.stringify({
+    submittedAt: results.meta.submittedAt,
+    studentName: results.meta.studentName,
+    studentId: results.meta.studentId,
+    autoScore: results.summary.autoScore,
+    autoPossible: results.summary.autoPossible
+  }));
+}
+async function getRemoteSubmissionStatus(name, id){
+  const identity = submissionIdentity(name, id);
+  if(!GOOGLE_SCRIPT_URL || !identity) return {submitted:false};
+  try{
+    const url = GOOGLE_SCRIPT_URL + "?action=status&testKey=" + encodeURIComponent(TEST_KEY) + "&studentKey=" + encodeURIComponent(identity);
+    const res = await fetch(url);
+    return await res.json();
+  }catch(e){
+    return {submitted:false, checkError:e.message};
+  }
+}
+function performanceBand(percent){
+  if(percent >= 85) return "Distinguished Learner";
+  if(percent >= 70) return "Proficient Learner";
+  if(percent >= 60) return "Developing Learner";
+  return "Beginning Learner";
+}
+function persistState(){
+  localStorage.setItem("ga_grade6_math_mock_state", JSON.stringify(state));
+}
+function loadState(){
+  const saved = localStorage.getItem("ga_grade6_math_mock_state");
+  if(!saved) return;
+  try{
+    const parsed = JSON.parse(saved);
+    if(parsed && parsed.started && !parsed.finished){
+      state = parsed;
+      document.getElementById("startScreen").classList.add("hidden");
+      document.getElementById("testScreen").classList.remove("hidden");
+      renderNav();
+      renderQuestion();
+      updateSidebar();
+      startTimer();
+      document.getElementById("studentLabel").textContent = parsed.student.name || "";
+    }
+  }catch(e){}
+}
+function clearSavedState(){
+  localStorage.removeItem("ga_grade6_math_mock_state");
+}
+
+function answered(q){
+  const a = state.answers[q.id];
+  if(a == null) return false;
+  if(typeof a === "string") return a.trim() !== "";
+  if(Array.isArray(a)) return a.length > 0;
+  if(typeof a === "object") return Object.values(a).some(v => String(v||"").trim() !== "");
+  return false;
+}
+
+function renderNav(){
+  const nav = document.getElementById("navGrid");
+  nav.innerHTML = "";
+  questions.forEach((q, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "nav-btn";
+    if(idx === state.currentIndex) btn.classList.add("current");
+    if(answered(q)) btn.classList.add("answered");
+    if(state.flagged[q.id]) btn.classList.add("flagged");
+    btn.innerHTML = `${q.id}${state.flagged[q.id] ? '<span class="dot">⚑</span>' : ''}`;
+    btn.onclick = () => { saveCurrentInputs(); state.currentIndex = idx; persistState(); renderQuestion(); renderNav(); updateSidebar(); };
+    nav.appendChild(btn);
+  });
+}
+
+function updateSidebar(){
+  const answeredCount = questions.filter(q => answered(q)).length;
+  const flaggedCount = Object.values(state.flagged).filter(Boolean).length;
+  document.getElementById("answeredCount").textContent = answeredCount;
+  document.getElementById("flaggedCount").textContent = flaggedCount;
+  const pct = Math.round((answeredCount / questions.length) * 100);
+  document.getElementById("progressBar").style.width = pct + "%";
+  document.getElementById("progressText").textContent = `${answeredCount} of ${questions.length} answered`;
+}
+
+function optionHtml(name, key, text, checked, multi=false){
+  const inputId = `${name}_${key}`;
+  return `<div class="choice ${checked ? 'selected' : ''}" tabindex="0" role="button" aria-pressed="${checked ? 'true' : 'false'}">
+      <input id="${inputId}" type="${multi?'checkbox':'radio'}" name="${name}" value="${key}" ${checked ? 'checked' : ''}>
+      <label for="${inputId}">${key}. ${text}</label>
+    </div>`;
+}
+
+function getMatchOptions(selected=""){
+  const opts = ["","A","B","C","D"].map(v => `<option value="${v}" ${v===selected?'selected':''}>${v || 'Select'}</option>`).join("");
+  return `<select class="match-select">${opts}</select>`;
+}
+function getDdOptions(list, selected=""){
+  return `<select class="dd-select">${list.map(v => `<option value="${v}" ${v===selected?'selected':''}>${v}</option>`).join("")}</select>`;
+}
+
+function renderQuestion(){
+  const q = questions[state.currentIndex];
+  const card = document.getElementById("questionCard");
+  let body = `<div class="q-header"><h3>Question ${q.id}</h3>
+      <div class="meta">
+        <span class="pill">${sections[q.section]}</span>
+        <span class="pill">Standard: ${q.standard.join(", ")}</span>
+        <span class="pill">DOK ${q.dok}</span>
+        <span class="pill">${q.level}</span>
+        <span class="pill">${q.points} point${q.points>1?'s':''}</span>
+      </div>
+    </div><div class="question-body">`;
+  if(q.te) body += `<div class="te-box">▶ ${q.te}</div>`;
+  body += `<div class="stem">${q.stem}</div>`;
+
+  const a = state.answers[q.id] || {};
+  if(q.type === "sr"){
+    body += Object.entries(q.options).map(([key,val]) => optionHtml(`q_${q.id}`, key, val, Array.isArray(a)?a.includes(key):a===key, false)).join("");
+    body += `<div class="subtle" style="margin-top:10px">(Select one answer.)</div>`;
+  } else if(q.type === "ms"){
+    const arr = Array.isArray(a) ? a : [];
+    body += Object.entries(q.options).map(([key,val]) => optionHtml(`q_${q.id}`, key, val, arr.includes(key), true)).join("");
+  } else if(q.type === "dropdown24"){
+    const r = typeof a === "object" ? a : {};
+    body += `<div class="row">
+      <div class="field"><label>Unit Rate</label><span id="renderDd1"></span></div>
+      <div class="field"><label>Earnings for 7 Hours</label><span id="renderDd2"></span></div>
+    </div>`;
+  } else if(q.type === "match37"){
+    body += q.stem;
+  } else if(q.type.startsWith("cr")){
+    body += renderCRInputs(q, a);
+  }
+
+  body += `</div>`;
+  card.innerHTML = body;
+
+  if(q.type === "dropdown24"){
+    const r = typeof a === "object" ? a : {};
+    document.getElementById("renderDd1").innerHTML = getDdOptions(["$7.50","$7.75","$8.00","$8.25"], r.one || "$7.50");
+    document.getElementById("renderDd2").innerHTML = getDdOptions(["$46.00","$48.00","$52.50","$56.25"], r.two || "$46.00");
+  }
+  if(q.type === "match37"){
+    const r = typeof a === "object" ? a : {};
+    document.getElementById("match37_1").innerHTML = getMatchOptions(r.one || "");
+    document.getElementById("match37_2").innerHTML = getMatchOptions(r.two || "");
+    document.getElementById("match37_3").innerHTML = getMatchOptions(r.three || "");
+    document.getElementById("match37_4").innerHTML = getMatchOptions(r.four || "");
+  }
+
+  document.getElementById("prevBtn").disabled = state.currentIndex === 0;
+  document.getElementById("nextBtn").textContent = state.currentIndex === questions.length - 1 ? "Review" : "Next";
+  document.getElementById("flagBtn").textContent = state.flagged[q.id] ? "Unflag" : "Flag for Review";
+  attachChoiceHandlers();
+}
+
+function attachChoiceHandlers(){
+  document.querySelectorAll(".choice").forEach(choice => {
+    choice.addEventListener("click", (e) => {
+      const input = choice.querySelector("input");
+      if(!input) return;
+      if(e.target.tagName !== "INPUT") {
+        if(input.type === "radio") input.checked = true;
+        else input.checked = !input.checked;
+        input.dispatchEvent(new Event("change", {bubbles:true}));
+      }
+      document.querySelectorAll('.choice').forEach(c => c.classList.toggle('selected', !!c.querySelector('input')?.checked));
+      persistState();
+    });
+    choice.addEventListener("keydown", (e) => {
+      if(e.key === ' ' || e.key === 'Enter'){
+        e.preventDefault();
+        choice.click();
+      }
+    });
+  });
+  document.querySelectorAll('.choice input').forEach(input => {
+    input.addEventListener('change', () => {
+      document.querySelectorAll('.choice').forEach(c => c.classList.toggle('selected', !!c.querySelector('input')?.checked));
+      persistState();
+    });
+  });
+}
+
+
+function renderCRInputs(q, a){
+  if(q.id === 5){
+    return `
+      <div class="field"><label>Part A Answer</label><input type="text" data-key="partA" value="${escapeAttr(a.partA || "")}" placeholder="Enter amount of butter"></div>
+      <div class="field"><label>Part B Answer</label><input type="text" data-key="partB" value="${escapeAttr(a.partB || "")}" placeholder="Yes or No"></div>
+      <div class="field"><label>Explanation / Comparison Statement</label><textarea data-key="explain">${escapeText(a.explain || "")}</textarea></div>`;
+  }
+  if(q.id === 12){
+    return `
+      <div class="row">
+        <div class="field"><label>Player A - Mean</label><input type="text" data-key="aMean" value="${escapeAttr(a.aMean || "")}"></div>
+        <div class="field"><label>Player A - Median</label><input type="text" data-key="aMedian" value="${escapeAttr(a.aMedian || "")}"></div>
+        <div class="field"><label>Player B - Mean</label><input type="text" data-key="bMean" value="${escapeAttr(a.bMean || "")}"></div>
+        <div class="field"><label>Player B - Median</label><input type="text" data-key="bMedian" value="${escapeAttr(a.bMedian || "")}"></div>
+      </div>
+      <div class="field"><label>Part B Justification</label><textarea data-key="justify">${escapeText(a.justify || "")}</textarea></div>`;
+  }
+  if(q.id === 18){
+    return `
+      <div class="field"><label>Part A Explanation</label><textarea data-key="partA">${escapeText(a.partA || "")}</textarea></div>
+      <div class="field"><label>|−3| =</label><input type="text" data-key="abs" value="${escapeAttr(a.abs || "")}"></div>
+      <div class="field"><label>Real-World Meaning</label><textarea data-key="meaning">${escapeText(a.meaning || "")}</textarea></div>`;
+  }
+  if(q.id === 25){
+    return `
+      <div class="row">
+        <div class="field"><label>Gallons at 4 hours</label><input type="text" data-key="g4" value="${escapeAttr(a.g4 || "")}"></div>
+        <div class="field"><label>Gallons at 6 hours</label><input type="text" data-key="g6" value="${escapeAttr(a.g6 || "")}"></div>
+        <div class="field"><label>Gallons at 10 hours</label><input type="text" data-key="g10" value="${escapeAttr(a.g10 || "")}"></div>
+      </div>
+      <div class="field"><label>Equation</label><input type="text" data-key="equation" value="${escapeAttr(a.equation || "")}" placeholder="Example: g = 1.5h"></div>
+      <div class="field"><label>Gallons after 24 hours</label><input type="text" data-key="g24" value="${escapeAttr(a.g24 || "")}"></div>`;
+  }
+  if(q.id === 31){
+    return `
+      <div class="field"><label>Part A Area</label><input type="text" data-key="area" value="${escapeAttr(a.area || "")}" placeholder="Area of the garden"></div>
+      <div class="field"><label>Part B Volume of Soil</label><input type="text" data-key="volume" value="${escapeAttr(a.volume || "")}" placeholder="Cubic meters of soil"></div>`;
+  }
+  if(q.id === 38){
+    return `
+      <div class="field"><label>Part A Expression</label><input type="text" data-key="expr" value="${escapeAttr(a.expr || "")}" placeholder="Example: C = 25 + 0.10t"></div>
+      <div class="field"><label>Part B Cost for 85 Texts</label><input type="text" data-key="cost" value="${escapeAttr(a.cost || "")}"></div>
+      <div class="field"><label>Part C Justification</label><textarea data-key="justify">${escapeText(a.justify || "")}</textarea></div>`;
+  }
+  if(q.id === 44){
+    return `
+      <div class="field"><label>Part A Equation</label><input type="text" data-key="eq" value="${escapeAttr(a.eq || "")}" placeholder="Example: 1.75n = 12.25"></div>
+      <div class="field"><label>Part A Solution</label><input type="text" data-key="solA" value="${escapeAttr(a.solA || "")}"></div>
+      <div class="field"><label>Part B Inequality</label><input type="text" data-key="ineq" value="${escapeAttr(a.ineq || "")}" placeholder="Example: 1.75n ≤ 15"></div>
+      <div class="field"><label>Part B Solution</label><input type="text" data-key="solB" value="${escapeAttr(a.solB || "")}"></div>
+      <div class="field"><label>What It Means</label><textarea data-key="meaning">${escapeText(a.meaning || "")}</textarea></div>`;
+  }
+  if(q.id === 50){
+    return `
+      <div class="field"><label>Polygon Type</label><input type="text" data-key="type" value="${escapeAttr(a.type || "")}"></div>
+      <div class="row">
+        <div class="field"><label>PQ</label><input type="text" data-key="pq" value="${escapeAttr(a.pq || "")}"></div>
+        <div class="field"><label>QR</label><input type="text" data-key="qr" value="${escapeAttr(a.qr || "")}"></div>
+        <div class="field"><label>RS</label><input type="text" data-key="rs" value="${escapeAttr(a.rs || "")}"></div>
+        <div class="field"><label>SP</label><input type="text" data-key="sp" value="${escapeAttr(a.sp || "")}"></div>
+      </div>
+      <div class="field"><label>Perimeter</label><input type="text" data-key="perimeter" value="${escapeAttr(a.perimeter || "")}"></div>`;
+  }
+  return `<div class="field"><textarea data-key="response">${escapeText(a.response || "")}</textarea></div>`;
+}
+
+function saveCurrentInputs(){
+  const q = questions[state.currentIndex];
+  if(q.type === "sr"){
+    const checked = document.querySelector(`input[name="q_${q.id}"]:checked`);
+    state.answers[q.id] = checked ? checked.value : "";
+  } else if(q.type === "ms"){
+    const checked = Array.from(document.querySelectorAll(`input[name="q_${q.id}"]:checked`)).map(el => el.value);
+    state.answers[q.id] = checked;
+  } else if(q.type === "dropdown24"){
+    const sels = document.querySelectorAll(".dd-select");
+    state.answers[q.id] = {one:sels[0]?.value || "", two:sels[1]?.value || ""};
+  } else if(q.type === "match37"){
+    const sels = document.querySelectorAll(".match-select");
+    state.answers[q.id] = {one:sels[0]?.value || "", two:sels[1]?.value || "", three:sels[2]?.value || "", four:sels[3]?.value || ""};
+  } else if(q.type.startsWith("cr")){
+    const obj = {};
+    document.querySelectorAll("[data-key]").forEach(el => obj[el.dataset.key] = el.value);
+    state.answers[q.id] = obj;
+  }
+  persistState();
+}
+
+async function beginAssessment(){
+  const status = document.getElementById("startStatus");
+  state.student.name = document.getElementById("studentName").value.trim();
+  state.student.id = document.getElementById("studentId").value.trim();
+  state.student.teacher = document.getElementById("teacherName").value.trim();
+  if(!state.student.name && !state.student.id){
+    status.textContent = "Enter at least a student name or student ID before beginning.";
+    return;
+  }
+  const localLock = getLocalLock(state.student.name, state.student.id);
+  if(localLock){
+    status.textContent = "This assessment has already been submitted for this student on this device.";
+    return;
+  }
+  status.textContent = "Checking submission status...";
+  const remoteStatus = await getRemoteSubmissionStatus(state.student.name, state.student.id);
+  if(remoteStatus && remoteStatus.submitted){
+    status.textContent = "This student already has a submitted attempt recorded for this assessment.";
+    return;
+  }
+  status.textContent = "";
+  state.started = true;
+  state.finished = false;
+  state.endTime = Date.now() + TEST_MINUTES * 60 * 1000;
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("testScreen").classList.remove("hidden");
+  document.getElementById("studentLabel").textContent = `${state.student.name || "Student"}${state.student.id ? " • " + state.student.id : ""}`;
+  renderNav();
+  renderQuestion();
+  updateSidebar();
+  persistState();
+  startTimer();
+}
+
+let timerInterval = null;
+function startTimer(){
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if(!state.endTime) return;
+    const ms = state.endTime - Date.now();
+    if(ms <= 0){
+      clearInterval(timerInterval);
+      document.getElementById("timerDisplay").textContent = "00:00";
+      alert("Time is up. The assessment will now be submitted.");
+      submitAssessment();
+      return;
+    }
+    const totalSec = Math.floor(ms/1000);
+    const m = String(Math.floor(totalSec/60)).padStart(2,"0");
+    const s = String(totalSec % 60).padStart(2,"0");
+    document.getElementById("timerDisplay").textContent = `${m}:${s}`;
+  }, 1000);
+}
+
+function showReview(){
+  saveCurrentInputs();
+  document.getElementById("testScreen").classList.add("hidden");
+  document.getElementById("reviewScreen").classList.remove("hidden");
+  const answeredNum = questions.filter(q => answered(q)).length;
+  const flaggedNum = Object.values(state.flagged).filter(Boolean).length;
+  document.getElementById("reviewAnswered").textContent = answeredNum;
+  document.getElementById("reviewUnanswered").textContent = questions.length - answeredNum;
+  document.getElementById("reviewFlagged").textContent = flaggedNum;
+  const wrap = document.getElementById("reviewList");
+  wrap.innerHTML = "";
+  questions.forEach((q, idx) => {
+    const div = document.createElement("div");
+    div.className = "review-item";
+    div.innerHTML = `<div><strong>Q${q.id}</strong></div>
+      <div>${answered(q) ? '<span class="badge">Answered</span>' : '<span class="badge">Blank</span>'}</div>
+      <div style="margin-top:6px">${state.flagged[q.id] ? '<span class="badge">Flagged</span>' : ''}</div>
+      <div style="margin-top:8px"><button class="btn secondary" style="padding:8px 10px" data-go="${idx}">Go to question</button></div>`;
+    wrap.appendChild(div);
+  });
+  wrap.querySelectorAll("[data-go]").forEach(btn => btn.onclick = () => {
+    state.currentIndex = Number(btn.dataset.go);
+    document.getElementById("reviewScreen").classList.add("hidden");
+    document.getElementById("testScreen").classList.remove("hidden");
+    renderQuestion();
+    renderNav();
+    updateSidebar();
+    persistState();
+  });
+}
+
+function normalizeText(s){
+  return String(s || "")
+    .toLowerCase()
+    .replace(/[\u2212−]/g, "-")
+    .replace(/⅓/g, "1/3")
+    .replace(/⅔/g, "2/3")
+    .replace(/¼/g, "1/4")
+    .replace(/¾/g, "3/4")
+    .replace(/½/g, "1/2")
+    .replace(/⅛/g, "1/8")
+    .replace(/⅜/g, "3/8")
+    .replace(/⅞/g, "7/8")
+    .replace(/\$/g,"")
+    .replace(/cups?|cup|meters?|meter|miles?|mile|hours?|hour|gallons?|gallon|feet|foot|ft\^?3|ft³|cm²|cm\^?2|m²|m\^?2|m³|m\^?3|units?/g,"")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function parseMixed(input){
+  let s = normalizeText(input);
+  if(!s) return NaN;
+  s = s.replace(/,/g,"");
+  if(/^[+-]?\d+(\.\d+)?$/.test(s)) return Number(s);
+  const mixed = s.match(/^([+-]?\d+)\s+(\d+)\/(\d+)$/);
+  if(mixed) return Number(mixed[1]) + Number(mixed[2])/Number(mixed[3]);
+  const frac = s.match(/^([+-]?\d+)\/(\d+)$/);
+  if(frac) return Number(frac[1])/Number(frac[2]);
+  return Number.NaN;
+}
+function approx(input, target, tol=.01){
+  const n = parseMixed(input);
+  return Number.isFinite(n) && Math.abs(n - target) <= tol;
+}
+function containsAny(s, arr){
+  const t = normalizeText(s);
+  return arr.some(x => t.includes(normalizeText(x)));
+}
+function compareSet(a,b){
+  const x = [...new Set(a)].sort().join("|");
+  const y = [...new Set(b)].sort().join("|");
+  return x === y;
+}
+
+function scoreQuestion(q, response){
+  let auto = 0, autoPossible = q.points, manualPending = 0, status = "Blank", responseDisplay = "";
+  if(response == null || response === "" || (Array.isArray(response) && response.length===0) || (typeof response==="object" && Object.values(response).every(v => String(v||"").trim()===""))){
+    return {auto, autoPossible, manualPending:q.type.startsWith("cr") ? q.points : 0, status:"Blank", responseDisplay:""};
+  }
+
+  if(q.type === "sr"){
+    responseDisplay = response;
+    const ok = q.correct.includes(response);
+    auto = ok ? 1 : 0;
+    status = ok ? "Correct" : "Incorrect";
+    return {auto, autoPossible, manualPending:0, status, responseDisplay};
+  }
+
+  if(q.type === "ms"){
+    responseDisplay = Array.isArray(response) ? response.join(", ") : "";
+    const ok = compareSet(response || [], q.correct);
+    auto = ok ? 1 : 0;
+    status = ok ? "Correct" : "Incorrect";
+    return {auto, autoPossible, manualPending:0, status, responseDisplay};
+  }
+
+  if(q.type === "dropdown24"){
+    responseDisplay = `${response.one || ""}; ${response.two || ""}`;
+    const ok = response.one === "$7.50" && response.two === "$52.50";
+    auto = ok ? 1 : 0;
+    status = ok ? "Correct" : "Incorrect";
+    return {auto, autoPossible, manualPending:0, status, responseDisplay};
+  }
+
+  if(q.type === "match37"){
+    responseDisplay = JSON.stringify(response);
+    const ok = response.one==="B" && response.two==="A" && response.three==="A" && response.four==="C";
+    auto = ok ? 1 : 0;
+    status = ok ? "Correct" : "Incorrect";
+    return {auto, autoPossible, manualPending:0, status, responseDisplay};
+  }
+
+  // Constructed response scoring
+  responseDisplay = JSON.stringify(response);
+  status = "Needs teacher review";
+  if(q.id === 5){
+    if(approx(response.partA, 9/16, 0.001)) auto += 1;
+    if(containsAny(response.partB, ["yes"]) && (containsAny(response.explain, ["1 1/4", "5/4", "1.25"]) || response.explain.includes(">"))) auto += 1;
+    else manualPending = 1;
+  } else if(q.id === 12){
+    const aMeanOk = approx(response.aMean, 76/6, 0.02);
+    const aMedianOk = approx(response.aMedian, 12.5, 0.02);
+    const bMeanOk = approx(response.bMean, 76/6, 0.02);
+    const bMedianOk = approx(response.bMedian, 13, 0.02);
+    if(aMeanOk && aMedianOk && bMeanOk && bMedianOk) auto += 1;
+    manualPending = 1;
+  } else if(q.id === 18){
+    if(approx(response.abs, 3, 0.001)) auto += 1;
+    manualPending = 1;
+  } else if(q.id === 25){
+    if(approx(response.g4, 6) && approx(response.g6, 9) && approx(response.g10, 15)) auto += 1;
+    const eqText = normalizeText(response.equation);
+    const eqOk = (eqText.includes("g=1.5h") || eqText.includes("g=3/2h") || eqText.includes("g=1.5 h") || eqText.includes("g=1.5*h"));
+    if(eqOk && approx(response.g24, 36)) auto += 1;
+    else manualPending = Math.max(manualPending, 1);
+  } else if(q.id === 31){
+    if(approx(response.area, 24)) auto += 1;
+    if(approx(response.volume, 12)) auto += 1;
+  } else if(q.id === 38){
+    const exprOk = containsAny(response.expr, ["25 + 0.10t","0.10t + 25","c=25+0.10t","c = 25 + 0.10t", "25+0.1t", "0.1t+25"]);
+    if(exprOk) auto += 1;
+    if(approx(response.cost, 33.5)) auto += 1;
+    // written justification still recommended
+    manualPending = response.justify ? 0 : 1;
+  } else if(q.id === 44){
+    const eqOk = containsAny(response.eq, ["1.75n = 12.25","12.25 = 1.75n"]);
+    const solAOk = approx(response.solA, 7);
+    if(eqOk && solAOk) auto += 1;
+    const ineqOk = containsAny(response.ineq, ["1.75n<=15","1.75n ≤ 15","15 >= 1.75n"]);
+    const solBOk = approx(response.solB, 8) || containsAny(response.solB, ["n<=8", "n ≤ 8", "8"]);
+    if(ineqOk && solBOk) auto += 1;
+    manualPending = response.meaning ? 0 : 1;
+  } else if(q.id === 50){
+    const typeOk = containsAny(response.type, ["rectangle"]);
+    const sidesOk = approx(response.pq,5)&&approx(response.qr,7)&&approx(response.rs,5)&&approx(response.sp,7);
+    if(typeOk) auto += 1;
+    if(sidesOk && approx(response.perimeter,24)) auto += 1;
+  } else {
+    manualPending = q.points;
+  }
+
+  auto = Math.min(auto, q.points);
+  manualPending = Math.max(0, q.points - auto);
+  return {auto, autoPossible, manualPending, status, responseDisplay};
+}
+
+function buildResults(){
+  let autoScore = 0, autoPossible = 0, manualPending = 0;
+  const sectionMap = {};
+  const standardMap = {};
+  const itemRows = [];
+
+  questions.forEach(q => {
+    const result = scoreQuestion(q, state.answers[q.id]);
+    autoScore += result.auto;
+    autoPossible += result.autoPossible;
+    manualPending += result.manualPending;
+    itemRows.push({
+      item:q.id,
+      section:q.section,
+      standards:q.standard.join(", "),
+      points:q.points,
+      auto:result.auto,
+      autoPossible:result.autoPossible,
+      manualPending:result.manualPending,
+      status:result.status,
+      response:result.responseDisplay
+    });
+
+    if(!sectionMap[q.section]) sectionMap[q.section] = {section:q.section, name:sections[q.section], auto:0, possible:0, pending:0};
+    sectionMap[q.section].auto += result.auto;
+    sectionMap[q.section].possible += result.autoPossible;
+    sectionMap[q.section].pending += result.manualPending;
+
+    q.standard.forEach(std => {
+      if(!standardMap[std]) standardMap[std] = {standard:std, auto:0, possible:0, pending:0};
+      standardMap[std].auto += result.auto;
+      standardMap[std].possible += result.autoPossible;
+      standardMap[std].pending += result.manualPending;
+    });
+  });
+
+  return {
+    meta:{
+      testKey:TEST_KEY,
+      studentName:state.student.name,
+      studentId:state.student.id,
+      teacher:state.student.teacher,
+      submittedAt:new Date().toISOString(),
+      totalItems:questions.length,
+      totalPoints:58
+    },
+    summary:{
+      autoScore,
+      autoPossible,
+      manualPending,
+      completion: Math.round((questions.filter(q => answered(q)).length / questions.length) * 100)
+    },
+    sectionPerformance:Object.values(sectionMap),
+    standardPerformance:Object.values(standardMap).sort((a,b)=>a.standard.localeCompare(b.standard)),
+    itemReport:itemRows,
+    rawAnswers:state.answers
+  };
+}
+
+async function submitAssessment(){
+  saveCurrentInputs();
+  state.results = buildResults();
+  state.finished = true;
+  clearInterval(timerInterval);
+  document.getElementById("testScreen").classList.add("hidden");
+  document.getElementById("reviewScreen").classList.add("hidden");
+  document.getElementById("resultsScreen").classList.remove("hidden");
+  renderResults(state.results);
+  setLocalLock(state.results);
+  clearSavedState();
+  await sendResultsToSheet(true);
+}
+
+function renderResults(results){
+  document.getElementById("autoScoreValue").textContent = results.summary.autoScore;
+  document.getElementById("autoPossibleValue").textContent = results.summary.autoPossible;
+  document.getElementById("manualPendingValue").textContent = results.summary.manualPending;
+  document.getElementById("completionValue").textContent = results.summary.completion + "%";
+  const pct = results.summary.autoPossible ? Math.round((results.summary.autoScore / results.summary.autoPossible) * 100) : 0;
+  const note = document.getElementById("sheetStatus");
+  note.innerHTML = `<strong>Student:</strong> ${results.meta.studentName || "—"} &nbsp; <strong>ID:</strong> ${results.meta.studentId || "—"} &nbsp; <strong>Teacher:</strong> ${results.meta.teacher || "—"}<br><strong>Estimated Achievement Band:</strong> ${performanceBand(pct)} (${pct}%)`;
+
+  buildTable("sectionTable", ["Section","Auto Score","Possible","Manual Review","Percent"], results.sectionPerformance.map(r => [
+    `${r.section} - ${r.name.replace(/^Section \d+:\s*/,"")}`, r.auto, r.possible, r.pending, percent(r.auto, r.possible)
+  ]));
+
+  buildTable("standardTable", ["Standard","Auto Score","Possible","Manual Review","Percent"], results.standardPerformance.map(r => [
+    r.standard, r.auto, r.possible, r.pending, percent(r.auto, r.possible)
+  ]));
+
+  buildTable("itemTable", ["Item","Section","Standard(s)","Points","Auto","Pending","Status","Response"], results.itemReport.map(r => [
+    r.item, r.section, r.standards, r.points, r.auto, r.manualPending, r.status, truncate(r.response, 90)
+  ]));
+}
+
+function buildTable(id, headers, rows){
+  const table = document.getElementById(id);
+  table.innerHTML = `<tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr>` +
+    rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("");
+}
+function percent(a,b){
+  if(!b) return "0%";
+  return `${Math.round((a/b)*100)}%`;
+}
+function truncate(s,n){
+  s = String(s || "");
+  return s.length > n ? s.slice(0,n-1) + "…" : s;
+}
+function escapeAttr(s){
+  return String(s || "").replace(/"/g,"&quot;");
+}
+function escapeText(s){
+  return String(s || "").replace(/</g,"&lt;");
+}
+
+async function sendResultsToSheet(autoMode = false){
+  const status = document.getElementById("sheetStatus");
+  if(!GOOGLE_SCRIPT_URL){
+    status.textContent = "Add your deployed Apps Script web app URL to the GOOGLE_SCRIPT_URL constant in the HTML file first.";
+    return;
+  }
+  try{
+    status.textContent = autoMode ? "Submitting results to Google Sheet..." : "Sending results...";
+    const payload = state.results || buildResults();
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if(json.ok){
+      status.textContent = autoMode ? "Results saved to Google Sheet." : "Results sent to Google Sheet.";
+    }else{
+      status.textContent = "Google Sheet response: " + (json.error || json.message || "Unknown error");
+    }
+  }catch(err){
+    status.textContent = "Could not send results. " + err.message;
+  }
+}
+
+function downloadJson(){
+  const blob = new Blob([JSON.stringify(state.results || buildResults(), null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "grade6_math_mock_results.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function printStudentReport(){
+  window.print();
+}
+
+function openTeacherDashboard(){
+  window.open(DASHBOARD_FILE, "_blank");
+}
+
+function showAnswerKey(){
+  const pwd = document.getElementById("teacherPassword").value;
+  if(pwd !== TEACHER_PASSWORD){
+    alert("Incorrect teacher password.");
+    return;
+  }
+  const wrap = document.getElementById("answerKeyWrap");
+  wrap.classList.remove("hidden");
+  wrap.innerHTML = `<div class="answer-key"><h3 style="margin-top:0">Teacher Answer Key</h3>` +
+    questions.map(q => `<div style="border-top:1px solid #d6e2ee;padding:10px 0">
+      <div><span class="section-tag">${q.section}</span><strong>Question ${q.id}</strong> - ${q.standard.join(", ")}</div>
+      <div style="margin-top:6px">${q.type.startsWith("cr") ? q.explanation : `Correct answer: ${q.correct.join(", ")}`}</div>
+    </div>`).join("") + `</div>`;
+}
+
+document.getElementById("beginBtn").onclick = beginAssessment;
+document.getElementById("prevBtn").onclick = () => {
+  saveCurrentInputs();
+  if(state.currentIndex > 0) state.currentIndex--;
+  renderQuestion(); renderNav(); updateSidebar(); persistState();
+};
+document.getElementById("nextBtn").onclick = () => {
+  saveCurrentInputs();
+  if(state.currentIndex === questions.length - 1){ showReview(); return; }
+  state.currentIndex++;
+  renderQuestion(); renderNav(); updateSidebar(); persistState();
+};
+document.getElementById("flagBtn").onclick = () => {
+  const q = questions[state.currentIndex];
+  state.flagged[q.id] = !state.flagged[q.id];
+  renderQuestion(); renderNav(); updateSidebar(); persistState();
+};
+document.getElementById("reviewBtn").onclick = showReview;
+document.getElementById("submitBtn").onclick = showReview;
+document.getElementById("backToTestBtn").onclick = () => {
+  document.getElementById("reviewScreen").classList.add("hidden");
+  document.getElementById("testScreen").classList.remove("hidden");
+};
+document.getElementById("finalSubmitBtn").onclick = submitAssessment;
+document.getElementById("showKeyBtn").onclick = showAnswerKey;
+document.getElementById("sendToSheetBtn").onclick = () => sendResultsToSheet(false);
+document.getElementById("printReportBtn").onclick = printStudentReport;
+document.getElementById("openDashboardBtn").onclick = openTeacherDashboard;
+document.getElementById("downloadJsonBtn").onclick = downloadJson;
+
+window.addEventListener("beforeunload", () => { if(state.started && !state.finished) saveCurrentInputs(); });
+loadState();
+</script>
+</body>
+</html>
